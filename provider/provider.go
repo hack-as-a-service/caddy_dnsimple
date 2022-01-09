@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"strconv"
+	"strings"
 
 	"github.com/hack-as-a-service/caddy_dnsimple/dnsimple"
 	"github.com/libdns/libdns"
@@ -21,6 +22,7 @@ func (p *Provider) client() dnsimple.Client {
 
 // GetRecords lists all the records in the zone.
 func (p *Provider) GetRecords(ctx context.Context, zone string) ([]libdns.Record, error) {
+	zone = normalizeZone(zone)
 	client := p.client()
 
 	records, err := client.GetRecords(zone, ctx)
@@ -39,6 +41,7 @@ func (p *Provider) GetRecords(ctx context.Context, zone string) ([]libdns.Record
 
 // AppendRecords adds records to the zone. It returns the records that were added.
 func (p *Provider) AppendRecords(ctx context.Context, zone string, records []libdns.Record) ([]libdns.Record, error) {
+	zone = normalizeZone(zone)
 	client := p.client()
 
 	addedRecords := []libdns.Record{}
@@ -69,6 +72,7 @@ func (p *Provider) SetRecords(ctx context.Context, zone string, records []libdns
 
 // DeleteRecords deletes the records from the zone. It returns the records that were deleted.
 func (p *Provider) DeleteRecords(ctx context.Context, zone string, records []libdns.Record) ([]libdns.Record, error) {
+	zone = normalizeZone(zone)
 	client := p.client()
 
 	deletedRecords := []libdns.Record{}
@@ -87,6 +91,10 @@ func (p *Provider) DeleteRecords(ctx context.Context, zone string, records []lib
 		deletedRecords = append(deletedRecords, r)
 	}
 	return deletedRecords, nil
+}
+
+func normalizeZone(zone string) string {
+	return strings.TrimSuffix(zone, ".")
 }
 
 // Interface guards
