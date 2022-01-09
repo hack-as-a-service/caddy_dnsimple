@@ -20,7 +20,6 @@ func (Provider) CaddyModule() caddy.ModuleInfo {
 	}
 }
 
-// TODO: This is just an example. Useful to allow env variable placeholders; update accordingly.
 // Provision sets up the module. Implements caddy.Provisioner.
 func (p *Provider) Provision(ctx caddy.Context) error {
 	p.Provider.APIToken = caddy.NewReplacer().ReplaceAll(p.Provider.APIToken, "")
